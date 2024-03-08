@@ -1,0 +1,49 @@
+base:
+- options/base/network_g/repnr_nafnet.yaml  # network_g
+- /home/qmd1/qmdtemp/ICCV23-LED/options/base/finetune/MM22_PMN.yaml   # train
+- options/base/val_and_logger.yaml          # val + logger
+
+name: PMNbranchnafnet1
+model_type: LEDFinetuneModel
+scale: 1
+num_gpu: 1
+manual_seed: 2022
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: 1-25-5MIPICamera1
+    type: MIPIDataset
+    dataroot: /home/qmd1/qmdtemp/ICCV23-LED/tools/mipi_starting_kit/data/train/Camera1
+    postfix: ~
+    which_meta: gt
+    data_pair_list: /home/qmd1/qmdtemp/ICCV23-LED/tools/mipi_starting_kit/data/train/Camera1/train.txt
+    zero_clip: false
+    scale_change: 
+        min: 1,  # 最小尺度因子
+        max: 1,  # 最大尺度因子
+    use_hflip: true
+    use_rot: true
+    crop_size: 1024
+    load_in_mem: true
+
+# add oomn conv for finetuning
+repnr_opt:
+  aux_conv_opts:
+    bias: true
+    init: zero_init_
+
+path:
+  # pretrain_network_g: /home/qmd1/qmdtemp/ICCV23-LED/experiments/fusion_UNetArch/models/net_g_227976.pth
+  pretrain_network_g: //home/qmd1/qmdtemp/ICCV23-LED/experiments/NAFNetPMNprebranchfinal/models/net_g_577024.pth
+  strict_load_g: false
+  resume_state: ~
+  CRF: datasets/EMoR
+
+val:
+  val_freq: !!float 99999
+  illumination_correct: true
+
+logger:
+  save_checkpoint_freq: !!float 99999
+
