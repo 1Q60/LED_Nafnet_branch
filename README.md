@@ -28,4 +28,5 @@ And:
 python led/trainc2.py -opt led/branchnaf2.yaml
 ```
 
-Please replace `xxxxxxxx` with the actual link to your Google Drive where the pre-trained model parameters, training and fine-tuning inference stage logs, training parameters, and test results are stored.
+
+git
