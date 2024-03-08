@@ -117,6 +117,7 @@ class RAWImageDenoisingModel(RAWBaseModel):
         self.optimizers.append(self.optimizer_g)
 
     def feed_data(self, data):
+
         self.lq = data['lq'].to(self.device)
         self.gt = data['gt'].to(self.device)
         self.ccm = data['ccm'].to(self.device)
@@ -139,7 +140,9 @@ class RAWImageDenoisingModel(RAWBaseModel):
                     self.gt, self.lq = self.augment(self.gt, self.lq)
 
         if isinstance(self.net_g, RepNRBase):
-            self.output = self.net_g(self.lq, self.camera_id)
+            # self.output = self.net_g(self.lq, self.camera_id)
+        if isinstance(self.net_g, RepNRBase):
+            self.output = self.net_g([self.lq,self.ccm,self.wb], self.camera_id)
         else:
             self.output = self.net_g(self.lq)
 
@@ -309,24 +312,28 @@ class LEDFinetuneModel(RAWBaseModel):
         return [param_group['lr'] for param_group in self.cur_optimizer.param_groups]
 
     def feed_data(self, data):
+        
         self.lq = data['lq'].to(self.device)
         self.gt = data['gt'].to(self.device)
         self.ccm = data['ccm'].to(self.device)
         self.wb = data['wb'].to(self.device)
         self.ratio = data['ratio'].to(self.device)
+        #print(self.lq.shape)
         if 'black_level' in data:
             self.black_level = data['black_level'].to(self.device)
             self.white_level = data['white_level'].to(self.device)
 
     def optimize_parameters(self, current_iter):
+        
         if current_iter == (self.align_iter + 1):
             logger = get_root_logger()
             logger.info('Switch to optimize oomn branch....')
             self.cur_optimizer = self.optimizer_oomn
             self.cur_scheduler = self.scheduler_oomn
         self.cur_optimizer.zero_grad()
-
-        self.output = self.net_g(self.lq)
+        #print("hello")
+        #self.output = self.net_g(self.lq)
+        self.output = self.net_g([self.lq,self.ccm,self.wb])
 
         l_total = 0
         loss_dict = OrderedDict()

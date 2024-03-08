@@ -16,15 +16,15 @@ train:
     loss_weight: 1.0
     reduction: mean
 
-  total_iter: 70000
-  align_iter: &align_iter 42000
-  oomn_iter:  &oomn_iter  28000
+  total_iter: 45000
+  align_iter: &align_iter 30000
+  oomn_iter:  &oomn_iter  15000
   warmup_iter: -1  # no warm up
 
   align_opt:
     optim_g:
       type: Adam
-      lr: !!float 2.5e-4
+      lr: !!float 2e-4
       weight_decay: 0
       betas: [0.9, 0.999]
 
